@@ -1,26 +1,28 @@
 (ns user
+  (:use [croque.core])
   (:require [com.stuartsierra.component :as component]
             [clojure.java.javadoc :refer [javadoc]]
             [clojure.pprint :refer [pprint]]
             [clojure.reflect :refer [reflect]]
             [clojure.repl :refer [apropos dir doc find-doc pst source]]
-            [clojure.tools.namespace.repl :refer [refresh refresh-all]]
-            [croque.core :as core]))
+            [clojure.tools.namespace.repl :refer [refresh refresh-all]]))
 
-(def system (core/create-croque-system {}))
+(def dev-config {:path "./data"})
+
+(def croque (new-croque-queue dev-config))
 
 (defn start
-  "Starts the system."
+  "Starts the Croque queue component."
   []
-  (alter-var-root #'system component/start))
+  (alter-var-root #'croque component/start))
 
 (defn stop
-  "Stops the system."
+  "Stops the component."
   []
-  (alter-var-root #'system component/stop))
+  (alter-var-root #'croque component/stop))
 
 (defn go
-  "Starts the system."
+  "Starts the component."
   []
   (start)
   :ready)
