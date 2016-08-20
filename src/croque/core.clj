@@ -20,12 +20,12 @@
 
 
 (defn create-appender
-  "Returns a new appender instance"
+  "Returns a started appender component"
   [queue]
   (component/start (appender/new-appender queue)))
 
 (defn create-tailer
-  "Returns a new tailer instance"
+  "Returns a started tailer component"
   [queue]
   (component/start (tailer/new-tailer queue)))
 
@@ -46,12 +46,18 @@
 ;;
 ;; CroqueQueue component
 ;;
+;; With this component corresponding queue appender and tailer components
+;; can also be created, which are automatically started when returned, but
+;; are not tracked or managed in any kind (the appender or tailer components
+;; currently have no start/stop logic).
 
 (defrecord CroqueQueue [path]
+
   component/Lifecycle
 
   (start [component]
     (log/info "Starting CroqueQueue")
+    (configure-logging!)
     (let [queue (create-queue path)]
       (assoc component :queue queue)))
 
