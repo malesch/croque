@@ -1,4 +1,5 @@
-(ns croque.test-utils)
+(ns croque.test-utils
+  (:import [java.util UUID]))
 
 (defmacro ^{:private true} assert-args
   [& pairs]
@@ -27,3 +28,9 @@
                                   (com.stuartsierra.component/stop ~(bindings 0)))))
     :else (throw (IllegalArgumentException.
                    "with-components only allows Symbols in bindings"))))
+
+
+(defn random-path
+  "Create a random path under `target` for the test queue"
+  []
+  (str "./target/test-" (UUID/randomUUID)))

@@ -2,13 +2,13 @@
   (:require [clojure.test :refer :all]
             [croque.core :refer :all]
             [croque.appender :as appender]
-            [croque.test-utils :refer [with-components]]
+            [croque.test-utils :refer [with-components random-path]]
             [croque.appender :as appender]
             [croque.tailer :as tailer]))
 
 (deftest creation-test
   (testing "Creation of queue, appender and tailer instances"
-    (with-components [queue (new-croque-queue {:path "target/creation"})]
+    (with-components [queue (new-croque-queue {:path (random-path)})]
       (let [appender (create-appender queue)
             tailer (create-tailer queue)]
         (is (map? (state queue)) "No queue state available")
@@ -17,7 +17,7 @@
 
 (deftest simple-append-read-test
   (testing "Create queue, append and read back test messages"
-    (with-components [queue (new-croque-queue {:path "target/append-next"})]
+    (with-components [queue (new-croque-queue {:path (random-path)})]
       (let [appender (create-appender queue)
             tailer (create-tailer queue)]
         ;; add three messages
