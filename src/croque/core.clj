@@ -13,26 +13,39 @@
                                                                 :max-size (* 512 1024)
                                                                 :backlog  10})}}))
 
-(defprotocol Queue
-  "Protocol for a Chronical Queue instance"
-
-  (create-appender [this]
-    "Returns a new appender instance")
-
-  (create-tailer [this]
-    "Returns a new tailer instance")
-
-  (state [this]
-    "Returns some information on the queue"))
-
 
 (defn create-queue [path]
   ;; return a binary SingleChronicleQueue
   (.build (ChronicleQueueBuilder/single (str path "/source"))))
 
-(defn queue-state [{:keys [queue]}]
-  {:file-path (.getPath queue) })
 
+(defn create-appender
+  "Returns a new appender instance"
+  [queue]
+  (component/start (appender/new-appender queue)))
+
+(defn create-tailer
+  "Returns a new tailer instance"
+  [queue]
+  (component/start (tailer/new-tailer queue)))
+
+(defn state
+  "Returns some information on the queue"
+  [{:keys [queue]}]
+  {:cycle (.cycle queue)
+   :first-cycle (.firstCycle queue)
+   :last-cycle (.lastCycle queue)
+   :epoch (.epoch queue)
+   :first-index (.firstIndex queue)
+   :index-count (.indexCount queue)
+   :source-id (.sourceId queue)
+   :file-path (.. queue file getPath)})
+
+
+
+;;
+;; CroqueQueue component
+;;
 
 (defrecord CroqueQueue [path]
   component/Lifecycle
@@ -46,18 +59,8 @@
     (log/info "Stopping CroqueQueue")
     (when-let [queue (:queue component)]
       (.close queue))
-    (assoc component :queue nil))
+    (assoc component :queue nil)))
 
-  Queue
-
-  (create-appender [component]
-    (component/start (appender/new-appender component)))
-
-  (create-tailer [component]
-    (component/start (tailer/new-tailer component)))
-
-  (state [component]
-    (queue-state component)))
 
 (defn new-croque-queue [config]
   (map->CroqueQueue config))
