@@ -1,5 +1,5 @@
 (ns croque.tailer
-  (:refer-clojure :exclude [peek] :as core)
+  (:refer-clojure :exclude [next] :as core)
   (:require [com.stuartsierra.component :as component]
             [taoensso.timbre :as log]
             [clojure.edn :as edn]
@@ -23,34 +23,34 @@
                                 (.index tailer))
    :file-path (.. tailer queue file getPath)})
 
-(defn peek
-  "Return the queue value from the current read position (sequence) and move to next position"
+(defn next
+  "Returns the next value from queue. Returns nil if no value available."
   [{:keys [tailer]}]
   (when-let [s (.readText tailer)]
     (edn/read-string s)))
 
-(defn seek-index!
+(defn seek-index-position
   "Set read position by the index position"
   [{:keys [tailer] :as component} index]
   (when-not (true? (.moveToIndex tailer index))
     (throw (ex-info "Invalid index position" {:index index
                                               :state (state component)}))))
 
-(defn seek-sequence!
+(defn seek-sequence-position
   "Set read position by the sequence number"
   [{:keys [tailer] :as component} sequence]
   (let [queue (.queue tailer)
         index (sequence->index queue sequence)]
     (try
-      (seek-index! component index)
+      (seek-index-position component index)
       (catch ExceptionInfo ex
         (throw (vary-meta ex assoc :sequence sequence))))))
 
-(defn rewind!
-  "Rewind the current read position by n steps"
+(defn rewind
+  "Rewind the current read position by n modifications"
   [component n]
   (when-let [{:keys [index]} (state component)]
-    (seek-sequence! component (- index n))))
+    (seek-sequence-position component (- index n))))
 
 
 ;;
