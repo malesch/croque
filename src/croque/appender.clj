@@ -2,7 +2,8 @@
   (:require [com.stuartsierra.component :as component]
             [taoensso.timbre :as log]
             [croque.util :refer [index->sequence]])
-  (:import [net.openhft.chronicle.queue ExcerptAppender]))
+  (:import [net.openhft.chronicle.bytes Bytes]
+           [net.openhft.chronicle.queue ExcerptAppender]))
 
 
 (defn make-appender [{:keys [queue]}]
@@ -12,7 +13,7 @@
 (defn append!
   "Append data to the queue"
   [{:keys [appender]} data]
-  (.writeText appender (pr-str data)))
+  (.writeBytes appender (Bytes/allocateDirect (.getBytes (pr-str data)))))
 
 (defn state
   "Return a map with state information on the appender instance"

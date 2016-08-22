@@ -5,6 +5,7 @@
             [clojure.edn :as edn]
             [croque.util :refer [index->sequence sequence->index]])
   (:import [clojure.lang ExceptionInfo]
+           [net.openhft.chronicle.bytes Bytes]
            [net.openhft.chronicle.queue ExcerptTailer]))
 
 
@@ -23,11 +24,14 @@
                                 (.index tailer))
    :file-path (.. tailer queue file getPath)})
 
+
 (defn next
   "Returns the next value from queue. Returns nil if no value available."
   [{:keys [tailer]}]
-  (when-let [s (.readText tailer)]
-    (edn/read-string s)))
+  (let [using (Bytes/allocateElasticDirect)]
+    (.readBytes tailer using)
+    (when-not (.isEmpty using)
+      (edn/read-string (String. (.toByteArray using))))))
 
 (defn seek-index-position
   "Set read position by the index position"
