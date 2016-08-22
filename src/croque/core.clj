@@ -19,37 +19,58 @@
   (.build (ChronicleQueueBuilder/single (str path "/source"))))
 
 
-(defn create-appender
-  "Returns a started appender component"
-  [queue]
-  (component/start (appender/new-appender queue)))
+;; Queue operations
 
-(defn create-tailer
-  "Returns a started tailer component"
-  [queue]
-  (component/start (tailer/new-tailer queue)))
-
-(defn state
+(defn queue-state
   "Returns some information on the queue"
   [{:keys [queue]}]
-  {:cycle (.cycle queue)
-   :first-cycle (.firstCycle queue)
-   :last-cycle (.lastCycle queue)
-   :epoch (.epoch queue)
-   :first-index (.firstIndex queue)
-   :index-count (.indexCount queue)
-   :source-id (.sourceId queue)
-   :file-path (.. queue file getPath)})
+  (let [q (:queue queue)]
+    {:cycle       (.cycle q)
+     :first-cycle (.firstCycle q)
+     :last-cycle  (.lastCycle q)
+     :epoch       (.epoch q)
+     :first-index (.firstIndex q)
+     :index-count (.indexCount q)
+     :source-id   (.sourceId q)
+     :file-path   (.. q file getPath)}))
 
 
+;; Appender operations
+
+(defn append-entry!
+  [{:keys [appender]} data]
+  (appender/append! appender data))
+
+(defn appender-state
+  [{:keys [appender]}]
+  (appender/state appender))
+
+
+;; Tailer operations
+
+(defn next-entry
+  [{:keys [tailer]}]
+  (tailer/next tailer))
+
+(defn rewind
+  [{:keys [tailer]} n]
+  (tailer/rewind tailer n))
+
+(defn seek-index-position
+  [{:keys [tailer]} ipos]
+  (tailer/seek-index-position tailer ipos))
+
+(defn seek-sequence-position
+  [{:keys [tailer]} spos]
+  (tailer/seek-sequence-position tailer spos))
+
+(defn tailer-state
+  [{:keys [tailer]}]
+  (tailer/state tailer))
 
 ;;
 ;; CroqueQueue component
 ;;
-;; With this component corresponding queue appender and tailer components
-;; can also be created, which are automatically started when returned, but
-;; are not tracked or managed in any kind (the appender or tailer components
-;; currently have no start/stop logic).
 
 (defrecord CroqueQueue [path]
 
@@ -67,6 +88,8 @@
       (.close queue))
     (assoc component :queue nil)))
 
-
 (defn new-croque-queue [config]
-  (map->CroqueQueue config))
+  (component/system-map
+    :queue (map->CroqueQueue config)
+    :appender (component/using (appender/new-appender) [:queue])
+    :tailer (component/using (tailer/new-tailer) [:queue])))

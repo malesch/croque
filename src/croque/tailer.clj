@@ -35,16 +35,16 @@
 
 (defn seek-index-position
   "Set read position by the index position"
-  [{:keys [tailer] :as component} index]
-  (when-not (true? (.moveToIndex tailer index))
-    (throw (ex-info "Invalid index position" {:index index
+  [{:keys [tailer] :as component} ipos]
+  (when-not (true? (.moveToIndex tailer ipos))
+    (throw (ex-info "Invalid index position" {:index ipos
                                               :state (state component)}))))
 
 (defn seek-sequence-position
   "Set read position by the sequence number"
-  [{:keys [tailer] :as component} sequence]
+  [{:keys [tailer] :as component} spos]
   (let [queue (.queue tailer)
-        index (sequence->index queue sequence)]
+        index (sequence->index queue spos)]
     (try
       (seek-index-position component index)
       (catch ExceptionInfo ex
@@ -73,5 +73,8 @@
     (assoc component :tailer nil)))
 
 
-(defn new-tailer [queue]
-  (->CroqueTailer queue))
+(defn new-tailer
+  ([]
+   (new-tailer {}))
+  ([queue]
+   (map->CroqueTailer queue)))

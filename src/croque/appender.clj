@@ -19,7 +19,7 @@
 
 (defn state
   "Return a map with state information on the appender instance"
-  [{:keys [^ExcerptAppender appender]}]
+  [{:keys [appender]}]
   {:source-id              (.sourceId appender)
    :cycle                  (.cycle appender)
    :last-index-appended    (.lastIndexAppended appender)
@@ -46,5 +46,8 @@
     (assoc component :appender nil)))
 
 
-(defn new-appender [queue]
-  (->CroqueAppender queue))
+(defn new-appender
+  ([]
+   (new-appender {}))
+  ([queue]
+   (map->CroqueAppender queue)))
