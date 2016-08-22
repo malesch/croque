@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [next] :as core)
   (:require [com.stuartsierra.component :as component]
             [taoensso.timbre :as log]
-            [clojure.edn :as edn]
+            [taoensso.nippy :as nippy]
             [croque.util :refer [index->sequence sequence->index]])
   (:import [clojure.lang ExceptionInfo]
            [net.openhft.chronicle.bytes Bytes]
@@ -31,7 +31,7 @@
   (let [using (Bytes/allocateElasticDirect)]
     (.readBytes tailer using)
     (when-not (.isEmpty using)
-      (edn/read-string (String. (.toByteArray using))))))
+      (nippy/thaw (.toByteArray using)))))
 
 (defn seek-index-position
   "Set read position by the index position"

@@ -4,6 +4,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.9.0-alpha10"]
                  [com.stuartsierra/component "0.3.1"]
+                 [com.taoensso/nippy "2.12.1"]
                  ;; Logging
                  [com.taoensso/timbre "4.7.0"]
                  [ch.qos.logback/logback-classic "1.1.7" :exclusions [org.slf4j/slf4j-api]]

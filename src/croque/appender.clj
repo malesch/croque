@@ -1,6 +1,7 @@
 (ns croque.appender
   (:require [com.stuartsierra.component :as component]
             [taoensso.timbre :as log]
+            [taoensso.nippy :as nippy]
             [croque.util :refer [index->sequence]])
   (:import [net.openhft.chronicle.bytes Bytes]
            [net.openhft.chronicle.queue ExcerptAppender]))
@@ -13,7 +14,8 @@
 (defn append!
   "Append data to the queue"
   [{:keys [appender]} data]
-  (.writeBytes appender (Bytes/allocateDirect (.getBytes (pr-str data)))))
+  (let [bytes (nippy/freeze data)]
+    (.writeBytes appender (Bytes/allocateDirect bytes))))
 
 (defn state
   "Return a map with state information on the appender instance"
