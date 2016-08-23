@@ -1,4 +1,4 @@
-(ns croque.test-utils
+(ns croque.helper
   (:import [java.util UUID]))
 
 (defmacro ^{:private true} assert-args

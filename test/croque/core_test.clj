@@ -1,7 +1,7 @@
 (ns croque.core-test
   (:require [clojure.test :refer :all]
             [croque.core :refer :all]
-            [croque.test-utils :refer [with-components random-path]]))
+            [croque.helper :refer [with-components random-path]]))
 
 (deftest creation-test
   (testing "Creation of queue, appender and tailer instances"
