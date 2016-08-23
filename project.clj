@@ -7,7 +7,7 @@
                  [com.taoensso/nippy "2.12.1"]
                  ;; Logging
                  [com.taoensso/timbre "4.7.0"]
-                 [ch.qos.logback/logback-classic "1.1.7" :exclusions [org.slf4j/slf4j-api]]
+                 [com.fzakaria/slf4j-timbre "0.3.2"]
                  [org.slf4j/jul-to-slf4j "1.7.21"]
                  [org.slf4j/jcl-over-slf4j "1.7.21"]
                  [org.slf4j/log4j-over-slf4j "1.7.21"]
