@@ -11,8 +11,8 @@
     (.toSequenceNumber rc index)))
 
 (defn sequence->index
-  "Calculate the index from the sequence number (e.g. from an appender) for
-  the given queue."
+  "Calculate the index position from the sequence number for the
+  given queue."
   [^RollingChronicleQueue queue ^long sequence]
   (let [rc (.rollCycle queue)
         q-cycle (.cycle queue)]
