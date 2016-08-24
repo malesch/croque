@@ -69,6 +69,7 @@
                  (take n (repeatedly rand-date))))))
 
 (deftest cycle-cleanup-listener-test
+  ;; silence chatty listener
   (log/set-level! :error)
   (let [run-test (fn [rollCycle cnt]
                    (let [path (random-path)

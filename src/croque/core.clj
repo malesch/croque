@@ -3,8 +3,9 @@
             [taoensso.timbre :as log]
             [taoensso.timbre.appenders.3rd-party.rotor :as rotor]
             [croque.appender :as appender]
-            [croque.tailer :as tailer])
-  (:import [net.openhft.chronicle.queue ChronicleQueueBuilder]))
+            [croque.tailer :as tailer]
+            [croque.listener :refer [cycle-cleanup-listener]])
+  (:import [net.openhft.chronicle.queue ChronicleQueueBuilder RollCycles]))
 
 
 (defn configure-logging! []
@@ -14,10 +15,22 @@
                                                                 :backlog  10})}}))
 
 
-(defn create-queue [path]
-  ;; return a binary SingleChronicleQueue
-  (.build (ChronicleQueueBuilder/single (str path "/source"))))
+(defn resolve-roll-cycle [roll-cycle]
+  (when roll-cycle
+    (try
+      (RollCycles/valueOf (name roll-cycle))
+      (catch Exception _
+        (log/errorf "Invalid roll-cycle configuration: %s" roll-cycle)
+        (log/info "Fallback to default `DAILY`")
+        (RollCycles/DAILY)))))
 
+(defn create-queue [path roll retain]
+  (let [rollCycle (resolve-roll-cycle roll)]
+    ;; return a binary SingleChronicleQueue
+    (cond-> (ChronicleQueueBuilder/single path)
+            roll (.rollCycle rollCycle)
+            retain (.storeFileListener (cycle-cleanup-listener path rollCycle retain))
+            true (.build))))
 
 ;; Queue operations
 
@@ -68,18 +81,20 @@
   [{:keys [tailer]}]
   (tailer/state tailer))
 
+
 ;;
 ;; CroqueQueue component
 ;;
 
-(defrecord CroqueQueue [path]
+(defrecord CroqueQueue [path roll-cycle retain-cycles]
 
   component/Lifecycle
 
   (start [component]
-    (log/info "Starting CroqueQueue")
+    (log/infof "Starting CroqueQueue [path=%s, roll-cycle=%s, retain-cycles=%s"
+               path roll-cycle retain-cycles)
     (configure-logging!)
-    (let [queue (create-queue path)]
+    (let [queue (create-queue path roll-cycle retain-cycles)]
       (assoc component :queue queue)))
 
   (stop [component]

@@ -7,7 +7,9 @@
             [clojure.repl :refer [apropos dir doc find-doc pst source]]
             [clojure.tools.namespace.repl :refer [refresh refresh-all]]))
 
-(def dev-config {:path "./data"})
+(def dev-config {:path "./data"
+                 :roll-cycle :TEST_HOURLY
+                 :retain-cycles 10})
 
 (def croque (new-croque-queue dev-config))
 
