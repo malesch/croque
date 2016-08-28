@@ -5,6 +5,34 @@ previous point in time (if not intentionally expunged). This is simply a wrapper
 exposes some basic functionality required for evaluating its usage as an [Event Storage] (http://martinfowler.com/eaaDev/EventSourcing.html) replacement for [Kafka]
 (http://kafka.apache.org/) in a simplified local embedded scenario. 
 
+## Configuration
+
+The queue is configured by starting the component with a configuration map.
+
+Sample configuration with all available options:
+```clj
+{
+ ;; Path on the file system where the queue information is persisted.
+ ;; This is a mandatory parameter.
+ :path "./data"
+
+ ;; Optional parameter to control the rolling period i.e. when new data files are created.
+ ;; The default value is :DAILY what results in a new data files created every day.
+ ;; Other possible values are amongst others: :TEST_SECONDLY, :MINUTELY, :HOURLY.
+ ;; See also:
+ ;; https://github.com/OpenHFT/Chronicle-Queue/blob/HEAD/src/main/java/net/openhft/chronicle/queue/RollCycles.java
+ :roll-cycle :DAILY
+
+ ;; Optional parameter to specify the number data files to be retained. Older cycle files are deleted. 
+ ;; If this option is not specified, no persisted data is deleted and the history is kept forever 
+ ;; (as long there is disk space). Thus, the duration how long back in time the queue can replayed  
+ ;; depends on the number cycles retained and what the roll-cycle period is configured.
+ ;; Example: If the roll cycle is set to :DAILY and :retain-cycles has the value 10, the queue will keep
+ ;; entries from the last 10 days.
+ :retain-cycles 10
+}
+```
+
 
 ## Usage
 
