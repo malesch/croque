@@ -1,9 +1,13 @@
 # croque
 
-An experimental implementation of a persistent historical queue [component] (https://github.com/stuartsierra/component), i.e. a queue where entries can be replayed from a 
+An experimental implementation of a durable queue [component] (https://github.com/stuartsierra/component), i.e. a queue where entries can be replayed from a
 previous point in time (if not intentionally expunged). This is simply a wrapper around the [Chronical Queue] (http://chronicle.software/products/chronicle-queue/) and only
 exposes some basic functionality required for evaluating its usage as an [Event Storage] (http://martinfowler.com/eaaDev/EventSourcing.html) replacement for [Kafka]
-(http://kafka.apache.org/) in a simplified local embedded scenario. 
+(http://kafka.apache.org/) in an embedded application scenario.
+
+
+[![croque version](http://clojars.org/croque/latest-version.svg)](http://clojars.org/croque)
+
 
 ## Configuration
 
@@ -23,8 +27,8 @@ Sample configuration with all available options:
  ;; https://github.com/OpenHFT/Chronicle-Queue/blob/HEAD/src/main/java/net/openhft/chronicle/queue/RollCycles.java
  :roll-cycle :DAILY
 
- ;; Optional parameter to specify the number data files to be retained. Older cycle files are deleted. 
- ;; If this option is not specified, no persisted data is deleted and the history is kept forever 
+ ;; Optional parameter to specify the number data files to be retained. Older cycle files are deleted.
+ ;; If this option is not specified, no persisted data is deleted and the history is kept forever
  ;; (as long there is disk space). Thus, the duration how long back in time the queue can replayed  
  ;; depends on the number cycles retained and what the roll-cycle period is configured.
  ;; Example: If the roll cycle is set to :DAILY and :retain-cycles has the value 10, the queue will keep
@@ -32,7 +36,6 @@ Sample configuration with all available options:
  :retain-cycles 10
 }
 ```
-
 
 ## Usage
 
@@ -95,11 +98,11 @@ Sample configuration with all available options:
 
 Copyright © 2016 Marcus Spiegel
 
-Permission to use, copy, modify, and distribute this software for any purpose with or without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software for any purpose with or without fee is hereby granted,
 provided that the above notice and this permission notice appear in all copies.
 
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL 
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, 
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER 
-IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
+IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
