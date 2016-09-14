@@ -1,9 +1,9 @@
 (ns croque.listener
   (:require [taoensso.timbre :as log])
-  (:import [java.io File]
-           [java.text SimpleDateFormat]
-           [net.openhft.chronicle.queue RollCycle]
-           [net.openhft.chronicle.queue.impl StoreFileListener]))
+  (:import (java.io File)
+           (java.text SimpleDateFormat)
+           (net.openhft.chronicle.queue RollCycle)
+           (net.openhft.chronicle.queue.impl StoreFileListener)))
 
 (defn parse-filename-time
   "Parse the time from the file name using the provided pattern (missing time/date

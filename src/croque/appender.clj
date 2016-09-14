@@ -3,8 +3,7 @@
             [taoensso.timbre :as log]
             [taoensso.nippy :as nippy]
             [croque.util :refer [index->sequence]])
-  (:import [net.openhft.chronicle.bytes Bytes]
-           [net.openhft.chronicle.queue ExcerptAppender]))
+  (:import (net.openhft.chronicle.bytes Bytes)))
 
 
 (defn make-appender [{:keys [queue]}]

@@ -5,7 +5,7 @@
             [croque.appender :as appender]
             [croque.tailer :as tailer]
             [croque.listener :refer [cycle-cleanup-listener]])
-  (:import [net.openhft.chronicle.queue ChronicleQueueBuilder RollCycles]))
+  (:import (net.openhft.chronicle.queue ChronicleQueueBuilder RollCycles)))
 
 
 (defn configure-logging! []

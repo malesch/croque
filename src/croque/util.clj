@@ -1,5 +1,5 @@
 (ns croque.util
-  (:import [net.openhft.chronicle.queue.impl RollingChronicleQueue]))
+  (:import (net.openhft.chronicle.queue.impl RollingChronicleQueue)))
 
 (defn index->sequence
   "Calculate the sequence position from the index of the given queue.

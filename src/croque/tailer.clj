@@ -4,9 +4,9 @@
             [taoensso.timbre :as log]
             [taoensso.nippy :as nippy]
             [croque.util :refer [index->sequence sequence->index]])
-  (:import [clojure.lang ExceptionInfo]
-           [net.openhft.chronicle.bytes Bytes]
-           [net.openhft.chronicle.queue ExcerptTailer]))
+  (:import (clojure.lang ExceptionInfo)
+           (net.openhft.chronicle.bytes Bytes)
+           (net.openhft.chronicle.queue ExcerptTailer)))
 
 
 (defn make-tailer [{:keys [queue]}]
