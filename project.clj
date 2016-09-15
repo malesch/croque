@@ -12,6 +12,6 @@
                  [org.slf4j/jcl-over-slf4j "1.7.21"]
                  [org.slf4j/log4j-over-slf4j "1.7.21"]
                  ;; Chronicle Queue
-                 [net.openhft/chronicle-queue "4.5.12"]]
+                 [net.openhft/chronicle-queue "4.5.13"]]
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.11"]]}})
