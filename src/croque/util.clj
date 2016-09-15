@@ -10,6 +10,12 @@
   (let [rc (.rollCycle queue)]
     (.toSequenceNumber rc index)))
 
+(defn cycle-from-index
+  "Return the cycle number from the index of the given queue."
+  [^RollingChronicleQueue queue ^long index]
+  (let [rc (.rollCycle queue)]
+    (.toCycle rc index)))
+
 (defn sequence->index
   "Calculate the index position from the sequence number for the
   given queue."
