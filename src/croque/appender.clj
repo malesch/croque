@@ -2,7 +2,7 @@
   (:require [com.stuartsierra.component :as component]
             [taoensso.timbre :as log]
             [taoensso.nippy :as nippy]
-            [croque.util :refer [index->sequence]])
+            [croque.util :as util])
   (:import (net.openhft.chronicle.bytes Bytes)))
 
 
@@ -25,8 +25,8 @@
    :timeout                (.timeoutMS appender)
    :lazy-indexing          (.lazyIndexing appender)
    :file-path              (.. appender queue file getPath)
-   :last-sequence-appended (index->sequence (.queue appender)
-                                            (.lastIndexAppended appender))})
+   :last-sequence-appended (util/sequence-from-index (.queue appender)
+                                                     (.lastIndexAppended appender))})
 
 
 ;;

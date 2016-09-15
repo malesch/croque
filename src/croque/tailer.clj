@@ -3,7 +3,7 @@
   (:require [com.stuartsierra.component :as component]
             [taoensso.timbre :as log]
             [taoensso.nippy :as nippy]
-            [croque.util :refer [index->sequence sequence->index]])
+            [croque.util :as util])
   (:import (clojure.lang ExceptionInfo)
            (net.openhft.chronicle.bytes Bytes)
            (net.openhft.chronicle.queue ExcerptTailer)))
@@ -20,8 +20,8 @@
    :cycle      (.cycle tailer)
    :direction  (keyword (str (.direction tailer)))
    :index      (.index tailer)
-   :sequence   (index->sequence (.queue tailer)
-                                (.index tailer))
+   :sequence   (util/sequence-from-index (.queue tailer)
+                                         (.index tailer))
    :file-path (.. tailer queue file getPath)})
 
 
@@ -44,7 +44,7 @@
   "Set read position by the sequence number"
   [{:keys [tailer] :as component} spos]
   (let [queue (.queue tailer)
-        index (sequence->index queue spos)]
+        index (util/sequence->index queue spos)]
     (try
       (seek-index-position component index)
       (catch ExceptionInfo ex
