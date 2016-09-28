@@ -48,7 +48,7 @@
     (try
       (seek-index-position component index)
       (catch ExceptionInfo ex
-        (throw (vary-meta ex assoc :sequence sequence))))))
+        (throw (util/merge-ex-data ex {:sequence sequence}))))))
 
 (defn rewind
   "Rewind the current read position by n modifications"

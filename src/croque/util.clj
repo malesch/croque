@@ -1,5 +1,6 @@
 (ns croque.util
-  (:import (net.openhft.chronicle.queue.impl RollingChronicleQueue)))
+  (:import (net.openhft.chronicle.queue.impl RollingChronicleQueue)
+           (clojure.lang ExceptionInfo)))
 
 (defn sequence-from-index
   "Return the sequence number from the index of the given queue.
@@ -23,3 +24,10 @@
   (let [rc (.rollCycle queue)
         q-cycle (.cycle queue)]
     (.toIndex rc q-cycle sequence)))
+
+(defn merge-ex-data
+  "Return a modified version of an ExceptionInfo exception where the exception
+  data is merged with the data map parameter."
+  [^ExceptionInfo ex dm]
+  {:pre [(map? dm)]}
+  (ex-info (.getMessage ex) (merge (ex-data ex) dm)))
