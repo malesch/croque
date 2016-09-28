@@ -25,7 +25,7 @@
    :file-path (.. tailer queue file getPath)})
 
 
-(defn next
+(defn next-entry
   "Returns the next value from queue. Returns nil if no value available."
   [{:keys [tailer]}]
   (let [using (Bytes/allocateElasticDirect)]

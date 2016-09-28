@@ -63,7 +63,7 @@
 
 (defn next-entry
   [{:keys [tailer]}]
-  (tailer/next tailer))
+  (tailer/next-entry tailer))
 
 (defn rewind
   [{:keys [tailer]} n]
