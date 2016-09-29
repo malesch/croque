@@ -49,6 +49,7 @@ Sample configuration with all available options:
 > (def queue (component/start (croque/new-croque-queue {:path "./data"})))
 
 ;; Add some example entries to the queue
+;; Every call will return the index position of the inserted entry
 > (croque/append-entry! queue [:example {:entry 0}])
 > (croque/append-entry! queue [:example {:entry 1}])
 > (croque/append-entry! queue [:example {:entry 2}])
@@ -69,7 +70,7 @@ Sample configuration with all available options:
 > (:last-index-appended (croque/appender-state queue))
 ;;=> 73164767887365
 
-;; Add an additional entry
+;; Add an additional entry (returns the insert index position)
 > (croque/append-entry! queue [:example {:entry 3}])
 
 ;; Rewind tailer two entries
