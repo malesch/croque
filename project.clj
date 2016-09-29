@@ -2,8 +2,7 @@
   :description "Component wrapper for Chronical Queue"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.9.0-alpha10"]
-                 [com.stuartsierra/component "0.3.1"]
+  :dependencies [[com.stuartsierra/component "0.3.1"]
                  [com.taoensso/nippy "2.12.1"]
                  ;; Logging
                  [com.taoensso/timbre "4.7.0"]
@@ -14,4 +13,5 @@
                  ;; Chronicle Queue
                  [net.openhft/chronicle-queue "4.5.13"]]
   :profiles {:dev {:source-paths ["dev"]
-                   :dependencies [[org.clojure/tools.namespace "0.2.11"]]}})
+                   :dependencies [[org.clojure/clojure "1.9.0-alpha13"]
+                                  [org.clojure/tools.namespace "0.2.11"]]}})
