@@ -2,8 +2,7 @@
   (:require [com.stuartsierra.component :as component]
             [taoensso.timbre :as log]
             [taoensso.nippy :as nippy]
-            [croque.util :as util])
-  (:import (net.openhft.chronicle.bytes Bytes)))
+            [croque.util :as util]))
 
 
 (defn make-appender [{:keys [queue]}]
@@ -11,10 +10,12 @@
 
 
 (defn append!
-  "Append data to the queue"
+  "Append data to the queue and return the index of the added entry."
   [{:keys [appender]} data]
-  (let [bytes (nippy/freeze data)]
-    (.writeBytes appender (Bytes/allocateDirect bytes))))
+  (let [data-bytes (nippy/freeze data)]
+    (with-open [context (.writingDocument appender)]
+      (.. context (wire) (write) (bytes data-bytes))
+      (.index context))))
 
 (defn state
   "Return a map with state information on the appender instance"

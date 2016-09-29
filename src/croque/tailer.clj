@@ -5,7 +5,6 @@
             [taoensso.nippy :as nippy]
             [croque.util :as util])
   (:import (clojure.lang ExceptionInfo)
-           (net.openhft.chronicle.bytes Bytes)
            (net.openhft.chronicle.queue ExcerptTailer)))
 
 
@@ -28,10 +27,10 @@
 (defn next-entry
   "Returns the next value from queue. Returns nil if no value available."
   [{:keys [tailer]}]
-  (let [using (Bytes/allocateElasticDirect)]
-    (.readBytes tailer using)
-    (when-not (.isEmpty using)
-      (nippy/thaw (.toByteArray using)))))
+  (with-open [context (.readingDocument tailer)]
+    (when (.isPresent context)
+      (let [data-bytes (.. context (wire) (read) (bytes))]
+        (nippy/thaw data-bytes)))))
 
 (defn seek-index-position
   "Set read position by the index position"
