@@ -91,7 +91,7 @@
   component/Lifecycle
 
   (start [component]
-    (log/infof "Starting CroqueQueue [path=%s, roll-cycle=%s, retain-cycles=%s"
+    (log/infof "Starting CroqueQueue [path=%s, roll-cycle=%s, retain-cycles=%s]"
                path roll-cycle retain-cycles)
     (configure-logging!)
     (let [queue (create-queue path roll-cycle retain-cycles)]
