@@ -14,8 +14,6 @@
                                                                 :max-size (* 512 1024)
                                                                 :backlog  10})}}))
 
-(declare with-tailer-restore)
-
 (defn resolve-roll-cycle [roll-cycle]
   (when roll-cycle
     (try
@@ -35,18 +33,32 @@
 
 ;; Queue operations
 
+(declare tailer-state)
+(defmacro with-tailer-restore
+  "Evaluate the body and restore the Tailer to the previous index position."
+  [croque & body]
+  `(let [state# (tailer-state ~croque)]
+        (try
+          ~@body
+          (finally
+            (tailer/restore-state (:tailer ~croque) state#)))))
+
+
 (defn queue-state
   "Returns some information on the queue"
-  [{:keys [queue]}]
-  (let [q (:queue queue)]
-    {:cycle       (.cycle q)
-     :first-cycle (.firstCycle q)
-     :last-cycle  (.lastCycle q)
-     :epoch       (.epoch q)
-     :first-index (.firstIndex q)
-     :index-count (.indexCount q)
-     :source-id   (.sourceId q)
-     :file-path   (.. q file getPath)}))
+  [{:keys [queue tailer] :as croque}]
+  (with-tailer-restore croque
+                       (let [q (:queue queue)
+                             t (.toEnd (:tailer tailer))]
+                            {:cycle       (.cycle q)
+                             :first-cycle (.firstCycle q)
+                             :last-cycle  (.lastCycle q)
+                             :epoch       (.epoch q)
+                             :first-index (.firstIndex q)
+                             :last-index  (.index t)
+                             :index-count (.indexCount q)
+                             :source-id   (.sourceId q)
+                             :file-path   (.. q file getPath)})))
 
 
 ;; Appender operations
@@ -81,15 +93,6 @@
 (defn tailer-state
   [{:keys [tailer]}]
   (tailer/state tailer))
-
-(defmacro with-tailer-restore
-  "Evaluate the body and restore the Tailer to the previous index position."
-  [croque & body]
-  `(let [idx-pos# (:index (tailer-state ~croque))]
-    (try
-       ~@body
-       (finally
-         (seek-index-position ~croque idx-pos#)))))
 
 ;;
 ;; CroqueQueue component

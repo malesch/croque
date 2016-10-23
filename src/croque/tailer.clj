@@ -5,11 +5,12 @@
             [taoensso.nippy :as nippy]
             [croque.util :as util])
   (:import (clojure.lang ExceptionInfo)
-           (net.openhft.chronicle.queue ExcerptTailer)))
+           (net.openhft.chronicle.queue ExcerptTailer TailerDirection)))
 
 
 (defn make-tailer [{:keys [queue]}]
-  (.createTailer queue))
+  (->> queue
+       (.createTailer)))
 
 
 (defn state
@@ -40,7 +41,7 @@
                                               :state (state component)}))))
 
 (defn seek-sequence-position
-  "Set read position by the sequence number"
+  "Set read position by the sequence number."
   [{:keys [tailer] :as component} spos]
   (let [queue (.queue tailer)
         index (util/sequence->index queue spos)]
@@ -50,11 +51,25 @@
         (throw (util/merge-ex-data ex {:sequence sequence}))))))
 
 (defn rewind
-  "Rewind the current read position by n modifications"
+  "Rewind the current read position by n modifications."
   [component n]
   (when-let [{:keys [index]} (state component)]
     (seek-sequence-position component (- index n))))
 
+(defn tailer-direction
+  "Set the tail direction (:FORWARD, :BACKWARD) of the Tailer."
+  [{:keys [tailer]} dir]
+  {:pre [(#{:FORWARD :BACKWARD} dir)]}
+  (case dir
+    :FORWARD (.direction tailer TailerDirection/FORWARD)
+    :BACKWARD (.direction tailer TailerDirection/BACKWARD)))
+
+(defn restore-state
+  "Restore from the state the Tailer index position and tail direction."
+  [component {:keys [index direction]}]
+  (doto component
+    (seek-index-position index)
+    (tailer-direction direction)))
 
 ;;
 ;; CroqueQueue tailer component

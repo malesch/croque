@@ -1,6 +1,7 @@
 (ns croque.core-test
   (:require [clojure.test :refer :all]
             [croque.core :refer :all]
+            [croque.tailer :refer [tailer-direction]]
             [croque.helper :refer [with-components random-path]]))
 
 (deftest creation-test
@@ -66,5 +67,6 @@
       (next-entry croque)                                   ;; {:entry 1}
       (with-tailer-restore croque
                            (rewind croque 2)
+                           (tailer-direction (:tailer croque) :BACKWARD)
                            (is (= (next-entry croque) {:entry 0}) "Wrong index position within `with-index-position` macro"))
       (is (= (next-entry croque) {:entry 2}) "Wrong index position after `with-index-position` macro"))))
