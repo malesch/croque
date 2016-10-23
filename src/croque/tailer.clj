@@ -36,9 +36,10 @@
 (defn seek-index-position
   "Set read position by the index position"
   [{:keys [tailer] :as component} ipos]
-  (when-not (true? (.moveToIndex tailer ipos))
-    (throw (ex-info "Invalid index position" {:index ipos
-                                              :state (state component)}))))
+  (when (pos? ipos)
+    (when-not (true? (.moveToIndex tailer ipos))
+      (throw (ex-info "Invalid index position" {:index ipos
+                                                :state (state component)})))))
 
 (defn seek-sequence-position
   "Set read position by the sequence number."
