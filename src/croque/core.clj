@@ -14,6 +14,7 @@
                                                                 :max-size (* 512 1024)
                                                                 :backlog  10})}}))
 
+(declare with-tailer-restore)
 
 (defn resolve-roll-cycle [roll-cycle]
   (when roll-cycle
@@ -81,6 +82,14 @@
   [{:keys [tailer]}]
   (tailer/state tailer))
 
+(defmacro with-tailer-restore
+  "Evaluate the body and restore the Tailer to the previous index position."
+  [croque & body]
+  `(let [idx-pos# (:index (tailer-state ~croque))]
+    (try
+       ~@body
+       (finally
+         (seek-index-position ~croque idx-pos#)))))
 
 ;;
 ;; CroqueQueue component

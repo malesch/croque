@@ -53,3 +53,18 @@
         (next-entry croque)                                ;; #{:second-entry}
         (seek-index-position croque idx)
         (is (= #{:first-entry} (next-entry croque)) "Wrong first entry after seek index position")))))
+
+(deftest with-tailer-restore-test
+  (testing "Test for the `with-tailer-restore` macro"
+    (with-components [croque (new-croque-queue {:path (random-path)})]
+      ;; prepare values
+      (append-entry! croque {:entry 0})
+      (append-entry! croque {:entry 1})
+      (append-entry! croque {:entry 2})
+      ;; read values
+      (next-entry croque)                                   ;; {:entry 0}
+      (next-entry croque)                                   ;; {:entry 1}
+      (with-tailer-restore croque
+                           (rewind croque 2)
+                           (is (= (next-entry croque) {:entry 0}) "Wrong index position within `with-index-position` macro"))
+      (is (= (next-entry croque) {:entry 2}) "Wrong index position after `with-index-position` macro"))))
