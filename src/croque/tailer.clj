@@ -55,7 +55,9 @@
   "Rewind the current read position by n modifications."
   [component n]
   (when-let [{:keys [index]} (state component)]
-    (seek-sequence-position component (- index n))))
+    (let [new-index (- index n)]
+      (when (pos? new-index)
+            (seek-sequence-position component new-index)))))
 
 (defn tailer-direction
   "Set the tail direction (:FORWARD, :BACKWARD) of the Tailer."

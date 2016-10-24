@@ -33,7 +33,7 @@
 
 ;; Queue operations
 
-(declare tailer-state)
+(declare tailer-state rewind)
 (defmacro with-tailer-restore
   "Evaluate the body and restore the Tailer to the previous index position."
   [croque & body]
@@ -48,17 +48,19 @@
   "Returns some information on the queue"
   [{:keys [queue tailer] :as croque}]
   (with-tailer-restore croque
-                       (let [q (:queue queue)
-                             t (.toEnd (:tailer tailer))]
-                            {:cycle       (.cycle q)
-                             :first-cycle (.firstCycle q)
-                             :last-cycle  (.lastCycle q)
-                             :epoch       (.epoch q)
-                             :first-index (.firstIndex q)
-                             :last-index  (.index t)
-                             :index-count (.indexCount q)
-                             :source-id   (.sourceId q)
-                             :file-path   (.. q file getPath)})))
+                       ;; Move to end (insert position) and go back one insert pos
+                       (.toEnd (:tailer tailer))
+                       (rewind croque 1)
+                       (let [q (:queue queue)]
+                         {:cycle       (.cycle q)
+                          :first-cycle (.firstCycle q)
+                          :last-cycle  (.lastCycle q)
+                          :epoch       (.epoch q)
+                          :first-index (.firstIndex q)
+                          :last-index  (:index (tailer-state croque))
+                          :index-count (.indexCount q)
+                          :source-id   (.sourceId q)
+                          :file-path   (.. q file getPath)})))
 
 
 ;; Appender operations
